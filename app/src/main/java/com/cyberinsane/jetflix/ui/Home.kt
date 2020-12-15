@@ -2,10 +2,9 @@ package com.cyberinsane.jetflix.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRowFor
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -15,25 +14,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.viewModel
+import androidx.navigation.NavHostController
 import com.cyberinsane.jetflix.R
 import com.cyberinsane.jetflix.data.model.Show
+import com.cyberinsane.jetflix.data.model.getHeroImage
 import com.cyberinsane.jetflix.data.model.getImage
 import com.cyberinsane.jetflix.domain.model.TVCollection
 import com.cyberinsane.jetflix.ui.theme.typography
 import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @Composable
-fun Main() {
-    val viewModel: MainViewModel = viewModel()
+fun Home(mainViewModel: MainViewModel, navController: NavHostController) {
 
-    val viewState by viewModel.state.collectAsState()
+    val viewState by mainViewModel.state.collectAsState()
 
     Surface(Modifier.fillMaxSize()) {
         MainContent(
@@ -45,28 +44,21 @@ fun Main() {
 @Composable
 fun MainContent(collection: TVCollection?) {
     Column(modifier = Modifier.fillMaxSize()) {
-
-        val appBarColor = MaterialTheme.colors.surface.copy(alpha = 1f)
-
-        // Draw a scrim over the status bar which matches the app bar
-        Spacer(Modifier.background(appBarColor).fillMaxWidth().statusBarsHeight())
-
         HomeAppBar(backgroundColor = Color.Black)
-
         ScrollableColumn {
 
             collection?.trending?.let {
+                HeroContent(show = it.first())
                 ShowsCarousel("Trending", it)
             }
-
             collection?.topRated?.let {
                 ShowsCarousel("Top Rated", it)
             }
-
             collection?.popular?.let {
                 ShowsCarousel("Popular", it)
             }
 
+            Spacer(modifier = Modifier.preferredHeight(80.dp))
         }
     }
 }
@@ -80,7 +72,7 @@ fun HomeAppBar(
         title = {
             Row {
                 Image(
-                    asset = vectorResource(R.drawable.ic_launcher_foreground),
+                    vectorResource(id = R.drawable.ic_launcher_foreground),
                     modifier = Modifier.preferredSize(48.dp)
                 )
                 Text(
@@ -96,8 +88,50 @@ fun HomeAppBar(
 }
 
 @Composable
+fun HeroContent(show: Show) {
+    Box() {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            CoilImage(
+                data = show.getHeroImage(),
+                modifier = Modifier.fillMaxWidth().preferredHeight(460.dp),
+                contentScale = ContentScale.Crop,
+                fadeIn = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Action • Sci-fi • Drama",
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(start = 32.dp, end = 32.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = {}) {
+                    Text(text = "List")
+                }
+
+                Button(onClick = {}) {
+                    Text(text = "Play")
+                }
+
+                Button(onClick = {}) {
+                    Text(text = "Info")
+                }
+            }
+        }
+    }
+
+
+    // Image
+    // + My List , Play >, Info (i)
+}
+
+@Composable
 fun ShowsCarousel(title: String, shows: List<Show>) {
-    Column(modifier = Modifier.preferredHeight(320.dp)) {
+    Column() {
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Text(
             text = title, modifier = Modifier.padding(start = 16.dp),
@@ -113,14 +147,17 @@ fun ShowsCarousel(title: String, shows: List<Show>) {
 fun ShowItem(show: Show) {
     Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
         show.posterPath?.let {
-            CoilImage(data = show.getImage(), modifier = Modifier.preferredWidth(140.dp))
+            CoilImage(
+                data = show.getImage(),
+                modifier = Modifier.preferredWidth(140.dp).preferredHeight(230.dp)
+            )
         }
         Spacer(Modifier.preferredHeight(8.dp))
         show.name?.let {
             Text(
                 text = show.name,
                 style = typography.body2,
-                maxLines = 2,
+                maxLines = 1,
                 modifier = Modifier.preferredWidth(140.dp)
             )
         }

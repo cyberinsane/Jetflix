@@ -8,9 +8,7 @@ import javax.inject.Inject
 
 class MovieService @Inject constructor(private val client: HttpClient) {
 
-    suspend fun getPopular() = client.get<ShowResult> {
-        println("MovieService Thread ${Thread.currentThread().name}")
-        path("/movie/popular") }
+    suspend fun getPopular() = client.get<ShowResult> { path("/movie/popular") }
 
     suspend fun getTopRated() = client.get<ShowResult> { path("/movie/top_rated") }
 

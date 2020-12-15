@@ -15,19 +15,9 @@ class GetMovieCollectionUseCase @Inject constructor(private val movieRepository:
     BaseUseCase<Unit, MovieCollection>() {
 
     override suspend fun createSuspend(data: Unit): Resource<MovieCollection> {
-
-        liveData<String>(Dispatchers.IO) {
-            emit("LOL")
-        }
-
         return coroutineScope {
 
-            println("usecase coroutineScope Thread ${Thread.currentThread().name}")
-
-            val nowPlayingRequest = async {
-                println("async coroutineScope Thread ${Thread.currentThread().name}")
-                movieRepository.getNowPlaying()
-            }
+            val nowPlayingRequest = async { movieRepository.getNowPlaying() }
             val popularRequest = async { movieRepository.getPopular() }
             val topRatedRequest = async { movieRepository.getTopRated() }
             val trendingRequest = async { movieRepository.getTrending() }

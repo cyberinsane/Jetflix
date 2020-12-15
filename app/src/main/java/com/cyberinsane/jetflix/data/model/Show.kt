@@ -38,6 +38,9 @@ fun Show.getImage(): String {
     return "https://image.tmdb.org/t/p/w500/$posterPath"
 }
 
+fun Show.getHeroImage(): String {
+    return "https://image.tmdb.org/t/p/w500/$posterPath"
+}
 
 //@Immutable
 //data class Show(

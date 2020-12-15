@@ -4,7 +4,6 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cyberinsane.jetflix.domain.model.MovieCollection
 import com.cyberinsane.jetflix.domain.model.TVCollection
@@ -25,7 +24,6 @@ class MainViewModel @ViewModelInject constructor(
 
     // Holds our view state which the UI collects via [state]
     private val _state = MutableStateFlow(MainViewState())
-
     private val refreshing = MutableStateFlow(false)
 
     val state: StateFlow<MainViewState>
@@ -36,13 +34,7 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     fun getShows() {
-
-        val liveData = refreshing.asLiveData()
-
         viewModelScope.launch {
-
-            println("viewModelScope Thread ${Thread.currentThread().name}")
-
             refreshing.value = true
             getMovieCollectionUseCase(Unit)
                 .zip(getTVCollectionUseCase(Unit))
@@ -60,6 +52,6 @@ class MainViewModel @ViewModelInject constructor(
 
 data class MainViewState(
     val tvCollection: TVCollection? = null,
-    val movieCollection: MovieCollection? = null,
+    var movieCollection: MovieCollection? = null,
     val refreshing: Boolean = false
 )

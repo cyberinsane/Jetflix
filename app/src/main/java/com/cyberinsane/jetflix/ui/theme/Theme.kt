@@ -1,6 +1,5 @@
 package com.cyberinsane.jetflix.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -31,7 +30,7 @@ val DarkColorPalette = darkColors(
 )
 
 @Composable
-fun JetflixTheme(content: @Composable() () -> Unit) {
+fun JetflixTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colors = DarkColorPalette,
         typography = typography,
